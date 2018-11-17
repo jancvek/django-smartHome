@@ -1,0 +1,186 @@
+{% load static %}<!DOCTYPE html>
+<html>
+  <head>
+    <!--meta tag for correct display on mobile phone-->
+    <meta content="width=device-width, initial-scale=1" name="viewport" charset="utf-8"/>
+    <title>Boards</title>
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.circliful.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>  
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.circliful.css' %}">
+  </head>
+  <body>
+    <h1>House Data</h1>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Select Place: </label>
+        <select class="form-control" id="exampleFormControlSelect1">
+            {% for x in choices %}
+                <option value={{ x.key }}>{{ x.value }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!--CIRCLE GRAPHS-->
+    <div class="container-fluid bg-3 text-center">    
+    <h3>Data:</h3><br>
+    <div class="row justify-content-md-center">
+        <div class="col-sm-3">
+            <p>Temperature</p>
+            <div id="circle_temp" style="max-width: 250px;"></div>
+        </div>
+        <div class="col-sm-3"> 
+            <p>Humidity</p>
+            <div id="circle_humi" style="max-width: 250px;"></div>
+        </div>      
+        <div class="col-sm-6"> 
+            <p>Graph</p>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    </div><br>
+
+    {% if temp.count < 1 %}
+        <h3>No data!</h3>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Temp</th>
+                    <th scope="col">Humidity</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in temp reversed  %}   
+                    <tr>
+                        <td>{{ obj.temp }}</td>
+                        <td>{{ obj.humidity }}</td>
+                        <td>{{ obj.save_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+  </body>
+  <script>
+
+
+    $( document ).ready(function() {
+        var hum = parseFloat('{{ latest.humidity }}');
+        if(!hum){hum=0}
+        var humColor;
+        if(hum <= 10){humColor = '#0000ff'}
+        else if(hum>10&&hum<=40){humColor = '#00ffff'}
+        else if(hum>40&&hum<=60){humColor = '#00ff00'}
+        else if(hum>60&&hum<=100){humColor = '#ff4000'}
+
+        var temp = parseFloat('{{ latest.temp }}');  
+        var tempFloat = parseFloat('{{ latest.temp }}');
+        var tempProc = tempFloat*100/30;
+        if(!temp){temp=0; tempProc=0;}
+
+        var tempColor;
+        if(tempFloat<18){tempColor = '#0000ff'}
+        else if(tempFloat>=18&&tempFloat<20){tempColor = '#00ffff'}
+        else if(tempFloat>=20&&tempFloat<23){tempColor = '#00ff00'}
+        else if(tempFloat>=23&&tempFloat<40){tempColor = '#ff4000'}
+
+        $('#exampleFormControlSelect1 option[value={{ curr_place }}]').attr('selected','selected');
+        
+        $("#circle_temp").circliful({
+            animationStep: 10,
+            foregroundBorderWidth: 5,
+            backgroundBorderWidth: 15,
+            percent: tempProc,
+            noPercentageSign: true,
+            replacePercentageByText: temp.toString()+"°C",
+            foregroundColor: tempColor
+        });
+
+        $("#circle_humi").circliful({
+            animationStep: 10,
+            foregroundBorderWidth: 5,
+            backgroundBorderWidth: 15,
+            percent: hum,
+            foregroundColor: humColor
+        });
+
+        var jsonData = {{myJson|safe}};
+        var tempData = [];
+        var humData = [];
+        
+        var num = jsonData.length;
+        if(num > 30)
+        {
+            num = jsonData.length - 30;
+        }
+
+        var maxTemp = 0;
+        var minTemp = 99;
+        var maxHumi = 0; 
+        var minHumi = 99;
+        for(var i=num;i<jsonData.length;i++)
+        {
+            var temp = jsonData[i]["fields"].temp;
+            var humi = jsonData[i]["fields"].humidity;
+            
+            //get min and max values
+            if(maxTemp<temp){maxTemp=temp}
+            if(minTemp>temp){minTemp=temp}
+            if(maxHumi<humi){maxHumi=humi}
+            if(minHumi>humi){minHumi=humi}
+
+            tempData.push({x: i, y: temp});
+            humData.push({x: i, y: humi});
+        }
+
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: "Temp",
+                    data: tempData,
+                    showLine: true,
+                    yAxisID: 't',
+                    //backgroundColor :'rgba(136,136,136,0.9)',
+		            borderColor : '#3498db'
+                },{
+                    label: "Humidity",
+                    data: humData,
+                    showLine: true,
+                    yAxisID: 'h'
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        id: 't',
+                        type: 'linear',
+                        position: 'left',
+                        ticks: {
+                            min:parseInt(minTemp)-5,
+                            max:parseInt(maxTemp)+5
+                        }
+                    },{
+                        id: 'h',
+                        type: 'linear',
+                        position: 'right',
+                        ticks: {
+                            min:80,
+                            max:40
+                        }
+                    }]
+                }
+            }
+        });
+    });
+    
+    $('select').on('change', function() {
+        $(location).attr('href',"../"+this.value+"/");
+    });
+
+  </script>
+</html>
