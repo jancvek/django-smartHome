@@ -78,6 +78,8 @@ def checkConn(request):
     return HttpResponse('Test request... ERROR!')
 
 def roomTemp(request, place=''):
+    
+    #set default place
     if not place:
         return redirect('/smasa/')
 

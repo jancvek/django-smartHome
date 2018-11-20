@@ -1,17 +1,15 @@
-{% load static %}<!DOCTYPE html>
-<html>
-  <head>
-    <!--meta tag for correct display on mobile phone-->
-    <meta content="width=device-width, initial-scale=1" name="viewport" charset="utf-8"/>
-    <title>Boards</title>
-    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/jquery.circliful.css' %}">
     <script type="text/javascript" src="{% static 'js/jquery.circliful.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>  
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/jquery.circliful.css' %}">
-  </head>
-  <body>
+    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script> 
+{% endblock %}
+
+{% block content %}
     <h1>House Data</h1>
     <div class="form-group">
         <label for="exampleFormControlSelect1">Select Place: </label>
@@ -63,9 +61,8 @@
             </tbody>
         </table>
     {% endif %}
-  </body>
-  <script>
 
+  <script>
 
     $( document ).ready(function() {
         var hum = parseFloat('{{ latest.humidity }}');
@@ -183,4 +180,6 @@
     });
 
   </script>
-</html>
+
+{% endblock %}
+

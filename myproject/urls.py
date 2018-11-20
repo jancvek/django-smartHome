@@ -21,7 +21,6 @@ from boards import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    
     path('input/', views.input, name='input'),
     path('checkConn/', views.checkConn, name='checkConn'),
     path('admin/', admin.site.urls),
