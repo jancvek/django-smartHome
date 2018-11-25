@@ -2,26 +2,35 @@
 {% load static %}
 {% block content %}
     <div class="card-deck">
-        <div class="card">
-        <img class="card-img-top" src="{% static "images/sensor_icon.jpg" %}" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">Sensors Data</h5>
-            <p class="card-text">This is a dashboard for sensors data.</p>
+        <div class="card" id="sens">
+            <img class="card-img-top" src="{% static "images/sensor_icon.jpg" %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Sensors Data</h5>
+                <p class="card-text">This is a dashboard for sensors data.</p>
+            </div>
         </div>
+        <div class="card" id="admin">
+            <img class="card-img-top" src="{% static "images/admin_icon.jpg" %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Admin Page</h5>
+                <p class="card-text">This is only for Administrators.</p>
+            </div>
         </div>
-        <div class="card">
-        <img class="card-img-top" src="{% static "images/admin_icon.jpg" %}" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">Admin Page</h5>
-            <p class="card-text">This is only for Administrators.</p>
-        </div>
-        </div>
-        <div class="card">
-        <img class="card-img-top" src="{% static "images/control_icon.png" %}" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">Controls</h5>
-            <p class="card-text">This page is in work...</p>
-        </div>
+        <div class="card" id="cont">
+            <img class="card-img-top" src="{% static "images/control_icon.png" %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Controls</h5>
+                <p class="card-text">This page is in work...</p>
+            </div>
         </div>
     </div>
+
+    <script>
+        $('.card').on('click', function(event) {
+            if(this.id == "sens") { $(location).attr('href',"{% url 'roomTemp' 'smasa' %}");}
+            else if(this.id == "admin") { $(location).attr('href',"{% url 'admin:index' %}");}
+            else if(this.id == "cont") { /*TODO: enable Control page*/ }
+            else { alert("Card with id is not appropriate! Id: "+this.id);}           
+    	});
+    </script>
 {% endblock %}
