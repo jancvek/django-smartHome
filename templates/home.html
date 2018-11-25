@@ -29,7 +29,7 @@
         $('.card').on('click', function(event) {
             if(this.id == "sens") { $(location).attr('href',"{% url 'roomTemp' 'smasa' %}");}
             else if(this.id == "admin") { $(location).attr('href',"{% url 'admin:index' %}");}
-            else if(this.id == "cont") { /*TODO: enable Control page*/ }
+            else if(this.id == "cont") {  $(location).attr('href',"{% url 'control' %}");}
             else { alert("Card with id is not appropriate! Id: "+this.id);}           
     	});
     </script>

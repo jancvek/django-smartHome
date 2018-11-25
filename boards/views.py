@@ -102,3 +102,7 @@ def roomTemp(request, place=''):
 
     #return HttpResponse('place: '+ place)
     return render(request, 'room_temperature.html', context)
+
+def control(request):
+
+    return render(request, 'control.html')

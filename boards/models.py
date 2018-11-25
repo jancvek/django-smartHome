@@ -44,3 +44,15 @@ class Device(models.Model):
     def __str__(self):
         retStr = str(self.dev_ident) + " - " + str(self.name)
         return str(retStr)
+
+class Control(models.Model):
+    control_id = models.IntegerField(null=False)
+    name = models.CharField(max_length=32)
+    description = models.TextField(blank=True)
+    state = models.BooleanField()
+    last_on_time = models.DateTimeField(null=True, blank=True)
+    last_off_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        retStr = str(self.control_id) + " - " + str(self.name)
+        return str(retStr)
