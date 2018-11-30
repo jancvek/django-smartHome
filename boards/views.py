@@ -72,7 +72,7 @@ def input(request):
 
 def checkConn(request):
     if request.method == 'GET':
-        testValue = request.GET['test']
+        testValue = request.GET.get('test','')
         return HttpResponse('Test request... OK')
 
     return HttpResponse('Test request... ERROR!')
@@ -104,5 +104,36 @@ def roomTemp(request, place=''):
     return render(request, 'room_temperature.html', context)
 
 def control(request):
+    if request.method == 'GET':
 
-    return render(request, 'control.html')
+        control1 = request.GET.get('1','')
+
+        if control1 == None:
+            control1 = ""
+
+        conObj1 = Control.objects.get(control_id=int(1))
+        state = conObj1.state
+        desc = conObj1.description
+        
+        stateBin = "0"
+        if state:
+            stateBin = "1"
+
+        newState = False
+
+
+
+
+        context = {
+            'control1': control1,
+            'state': state,
+            'desc': desc,
+            'newState': newState,
+            'ctype': type(control1),
+            'stype': type(state),
+        }
+
+        return render(request, 'control.html', context)
+
+    return HttpResponse('Test request... ERROR!')
+    

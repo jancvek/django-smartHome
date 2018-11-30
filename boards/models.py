@@ -48,7 +48,7 @@ class Device(models.Model):
 class Control(models.Model):
     control_id = models.IntegerField(null=False)
     name = models.CharField(max_length=32)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=False)
     state = models.BooleanField()
     last_on_time = models.DateTimeField(null=True, blank=True)
     last_off_time = models.DateTimeField(null=True, blank=True)

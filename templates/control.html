@@ -1,7 +1,144 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block style %}
+    .row{
+        margin-top: 20px;
+    }
+
+    #clock{
+        margin-left: 30px;
+        margin-right: 30px;
+    }
+    hr {
+       display: block;
+       position: relative;
+       padding: 0;
+       margin: 8px auto;
+       margin-top: 20px;
+       height: 0;
+       width: 100%;
+       max-height: 0;
+       font-size: 1px;
+       line-height: 0;
+       clear: both;
+       border: none;
+       border-top: 1px solid #aaaaaa;
+       border-bottom: 1px solid #ffffff;
+    }
+{% endblock %}
+
 {% block content %}
     
-<h1>Dela juhej!</h1>
+    <h1>{{ desc }}</h1>
+    <div class="container">
+        <div class="row">
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">30 min</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <label class="form-check-label" for="inlineRadio2">1 ura</label>
+            </div>
+                    <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option2">
+            <label class="form-check-label" for="inlineRadio3">2 uri</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option3" disabled>
+            <label class="form-check-label" for="inlineRadio4">3 ure</label>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div style="width: 150px;">
+                <button id="b1" type="button" class="btn btn-primary btn-lg btn-block" >Izključeno</button>
+            </div>	
+            <h2 id="clock">00:00:00</h2>
+            
+            <div id="warningDiv"/>
+            
+        </div>
+        <hr>
+    </div>
+    <script>
+	var i = 0, seconds = 0, minutes = 0, hours = 0;
+	$( document ).ready(function() {
+		
+	});
+
+	$("#b1").click(function() {
+		if(i%2 == 0)
+		{
+			$("#b1").removeClass("btn btn-primary btn-lg btn-block");		
+			$("#b1").addClass("btn btn-danger btn-lg btn-block");
+			$("#b1").html('Gretje');
+			
+			clearWarning();
+			startClock();			
+		}
+		else
+		{
+			$("#b1").removeClass("btn btn-danger btn-lg btn-block");		
+			$("#b1").addClass("btn btn-primary btn-lg btn-block");	
+			$("#b1").html('Izključeno');	
+			
+			$(".form-check-input").prop("checked", false);
+			
+			appendWarning();
+			endClock();		
+		}
+		i++;
+	});
+	
+	function startClock()
+	{
+		timeInterval = setInterval(function time(){
+			seconds++;
+			if (seconds >= 60) {
+				seconds = 0;
+				minutes++;
+				if (minutes >= 60) {
+					minutes = 0;
+					hours++;
+				}
+			}
+			
+			var timeStr = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+					
+			jQuery('#clock').html(timeStr);
+			  
+		}, 1000); 
+	}
+	
+	function endClock()
+	{
+		clearInterval(timeInterval);
+		seconds = 0, 
+		minutes = 0, 
+		hours = 0;
+		jQuery('#clock').html("00:00:00");
+	}
+	
+	function appendWarning()
+	{
+		var timeStr = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+		$( "#warningDiv" ).append( $( "<div id='warning' class='alert alert-primary' role='alert'>Gretje je bilo vključeno: "+ timeStr +" </div>" ) );
+		
+		closeInterval = setInterval(function fun(){		 
+			clearWarning();
+			clearInterval(closeInterval);
+		}, 3000); 
+		
+	}
+
+	function clearWarning()
+	{
+		$( "#warning" ).remove();
+	}
+	
+	
+	</script>
 
 {% endblock %}
