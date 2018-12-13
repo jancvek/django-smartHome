@@ -76,7 +76,8 @@
 			$("#b1").html('Gretje');
 			
 			clearWarning();
-			startClock();			
+			startClock();
+			sendAjax('on');			
 		}
 		else
 		{
@@ -87,7 +88,8 @@
 			$(".form-check-input").prop("checked", false);
 			
 			appendWarning();
-			endClock();		
+			endClock();	
+			sendAjax('off');		
 		}
 		i++;
 	});
@@ -133,12 +135,50 @@
 		
 	}
 
+	function appendWarningOnError()
+	{
+		$( "#warningDiv" ).append( $( "<div id='warning' class='alert alert-danger' role='alert'>Kontroler ni v omrežju!</div>" ) );
+		
+		endClock();
+		$("#b1").removeClass("btn btn-danger btn-lg btn-block");		
+		$("#b1").addClass("btn btn-primary btn-lg btn-block");	
+		$("#b1").html('Izključeno');	
+		i++;
+
+		closeInterval = setInterval(function fun(){		 
+			clearWarning();
+			clearInterval(closeInterval);
+		}, 3000); 
+		
+	}
+
 	function clearWarning()
 	{
 		$( "#warning" ).remove();
 	}
 	
-	
+	function sendAjax(action)
+	{ 
+		 $.ajax({
+			url: '/ajax/test/',
+			data: {
+				'action': action
+			},
+			dataType: 'json',
+			success: function (data) {
+				if (data.status) {
+					//alert("Status: " + data.status + " text: " + data.text);
+				}
+			},			
+			error: function(jqXHR, textStatus, errorThrown) {
+				appendWarningOnError();
+				//alert(jqXHR.status);
+				//alert(textStatus);
+				//alert(errorThrown);
+			}
+			
+		});
+	}
 	</script>
 
 {% endblock %}

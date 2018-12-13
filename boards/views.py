@@ -3,8 +3,12 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from django.core import serializers
+from django.http import JsonResponse
 from .models import *
 import decimal
+import urllib.request
+
+from time import sleep
 
 def home(request):
 
@@ -121,9 +125,6 @@ def control(request):
 
         newState = False
 
-
-
-
         context = {
             'control1': control1,
             'state': state,
@@ -137,3 +138,34 @@ def control(request):
 
     return HttpResponse('Test request... ERROR!')
     
+def ajaxTest(request):
+    action = request.GET.get('action', None)
+
+    try:
+        if action == 'on':
+            request1 = urllib.request.urlopen("http://192.168.0.120/?swi=1",timeout = 5)
+        elif action == 'off':
+            request1 = urllib.request.urlopen("http://192.168.0.120/?swi=0",timeout = 5)
+        else:
+            return HttpResponseBadRequest()
+
+        requestStatus = request1.getcode()
+        #print(request1.getcode())
+        #print(request1.read())
+    except urllib.error.HTTPError as e:
+        return HttpResponseServerError()
+        #print(e.code)
+        #print(e.read()) 
+    #handle timeout
+    except urllib.error.URLError as e:
+        return HttpResponseServerError()
+        #print(e.reason)   
+
+
+    data = {
+        'status': requestStatus,
+        'text': '',
+    }
+
+    return JsonResponse(data)
+    #return HttpResponse('Test request... ERROR!')

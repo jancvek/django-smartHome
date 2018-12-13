@@ -7,6 +7,7 @@ MEASURE_PLACES = (
     ('kopal','Kopalnica'),
     ('kuhin','Kuhinja'),
     ('balkz','Balkon zahod'),
+    ('zdnev','Dnevna zgoraj'),
 )
 
 class HouseData(models.Model):

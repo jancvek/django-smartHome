@@ -27,4 +27,5 @@ urlpatterns = [
     path('temp/', RedirectView.as_view(url='smasa/', permanent=False)),
     re_path(r'^temp/(?P<place>[-\w]+)/$', views.roomTemp, name='roomTemp'),
     path('control/', views.control, name='control'),
+    path('ajax/test/', views.ajaxTest, name='ajaxTest'),
 ]
