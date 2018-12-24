@@ -64,38 +64,73 @@
     </div>
     <script>
 	var i = 0, seconds = 0, minutes = 0, hours = 0;
+	var buttonState = false;
 	$( document ).ready(function() {
-		
+
+		var isOn = '{{ state }}';
+		var onTimeStr ='{{ onTime.isoformat }}';
+
+		//in case that button is on
+		if(isOn == 'False'){return;}
+
+		var onTime = new Date(onTimeStr);	
+
+		setButtonOn();
+		startClock(onTime);
 	});
 
+	function setButtonOn()
+	{
+		buttonState = true;
+
+		$("#b1").removeClass("btn btn-primary btn-lg btn-block");		
+		$("#b1").addClass("btn btn-danger btn-lg btn-block");
+		$("#b1").html('Gretje');
+
+		clearWarning();
+	}
+
+	function setButtonOff()
+	{
+		buttonState = false;
+
+		$("#b1").removeClass("btn btn-danger btn-lg btn-block");		
+		$("#b1").addClass("btn btn-primary btn-lg btn-block");	
+		$("#b1").html('Izključeno');	
+		
+		$(".form-check-input").prop("checked", false);
+		
+		appendWarning();		
+	}
+
 	$("#b1").click(function() {
-		if(i%2 == 0)
+
+		if(buttonState)
 		{
-			$("#b1").removeClass("btn btn-primary btn-lg btn-block");		
-			$("#b1").addClass("btn btn-danger btn-lg btn-block");
-			$("#b1").html('Gretje');
-			
-			clearWarning();
-			startClock();
-			sendAjax('on');			
+			sendAjax('off');
+			setButtonOff();	
+			endClock();				
 		}
 		else
 		{
-			$("#b1").removeClass("btn btn-danger btn-lg btn-block");		
-			$("#b1").addClass("btn btn-primary btn-lg btn-block");	
-			$("#b1").html('Izključeno');	
-			
-			$(".form-check-input").prop("checked", false);
-			
-			appendWarning();
-			endClock();	
-			sendAjax('off');		
+			sendAjax('on');	
+			setButtonOn();
+			startClock();			
 		}
 		i++;
 	});
 	
-	function startClock()
-	{
+	function startClock(startDate)
+	{	
+		if(startDate)
+		{
+			var now = moment(new Date()); 
+			var duration = moment.duration(now.diff(startDate));
+			seconds = duration.seconds();
+			minutes = duration.minutes();
+			hours = duration.hours();
+		}
+
 		timeInterval = setInterval(function time(){
 			seconds++;
 			if (seconds >= 60) {
@@ -179,6 +214,7 @@
 			
 		});
 	}
+
 	</script>
 
 {% endblock %}

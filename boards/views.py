@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from .models import *
 import decimal
 import urllib.request
+from datetime import datetime
+from django.utils import timezone
 
 from time import sleep
 
@@ -101,50 +103,40 @@ def roomTemp(request, place=''):
         'choices': choices,
         'curr_place': place,
         'latest': latest,
-        "myJson" : json_data,
+        'myJson' : json_data,
     }
 
     #return HttpResponse('place: '+ place)
     return render(request, 'room_temperature.html', context)
 
 def control(request):
-    if request.method == 'GET':
 
-        control1 = request.GET.get('1','')
+    contr = Control.objects.get(control_id=int(1))
+    state = contr.state
+    desc = contr.description
+    onTime = contr.last_on_time
 
-        if control1 == None:
-            control1 = ""
+    context = {
+        'state': state,
+        'desc': desc,
+        'onTime': onTime,
+    }
 
-        conObj1 = Control.objects.get(control_id=int(1))
-        state = conObj1.state
-        desc = conObj1.description
-        
-        stateBin = "0"
-        if state:
-            stateBin = "1"
+    return render(request, 'control.html', context)
 
-        newState = False
-
-        context = {
-            'control1': control1,
-            'state': state,
-            'desc': desc,
-            'newState': newState,
-            'ctype': type(control1),
-            'stype': type(state),
-        }
-
-        return render(request, 'control.html', context)
-
-    return HttpResponse('Test request... ERROR!')
-    
 def ajaxTest(request):
     action = request.GET.get('action', None)
 
+    contr = Control.objects.get(control_id=int(1))
+
     try:
         if action == 'on':
+            contr.state = True
+            contr.last_on_time = timezone.now()
             request1 = urllib.request.urlopen("http://192.168.0.120/?swi=1",timeout = 5)
         elif action == 'off':
+            contr.state = False
+            contr.last_off_time = timezone.now()
             request1 = urllib.request.urlopen("http://192.168.0.120/?swi=0",timeout = 5)
         else:
             return HttpResponseBadRequest()
@@ -161,6 +153,8 @@ def ajaxTest(request):
         return HttpResponseServerError()
         #print(e.reason)   
 
+    #save data in model only if there is no error
+    contr.save()
 
     data = {
         'status': requestStatus,
@@ -168,4 +162,3 @@ def ajaxTest(request):
     }
 
     return JsonResponse(data)
-    #return HttpResponse('Test request... ERROR!')

@@ -53,6 +53,7 @@ class Control(models.Model):
     state = models.BooleanField()
     last_on_time = models.DateTimeField(null=True, blank=True)
     last_off_time = models.DateTimeField(null=True, blank=True)
+    set_off_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         retStr = str(self.control_id) + " - " + str(self.name)
