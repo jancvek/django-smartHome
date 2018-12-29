@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+    
+    <h1>Kmetije</h1>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Ime</th>
+                    <th scope="col">Naslov</th>
+                    <th scope="col">Oddaljenost[km]</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in dataList %}   
+                    <tr>
+                        <td>{{ obj.farmObj.name }}</td>
+                        <td>{{ obj.farmObj.address }}</td>
+                        <td>{{ obj.dist }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+
+	</script>
+
+{% endblock %}

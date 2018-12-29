@@ -1,5 +1,4 @@
 """myproject URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
 Examples:
@@ -17,6 +16,9 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.views.generic.base import RedirectView
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from boards import views
 
 urlpatterns = [
@@ -28,4 +30,5 @@ urlpatterns = [
     re_path(r'^temp/(?P<place>[-\w]+)/$', views.roomTemp, name='roomTemp'),
     path('control/', views.control, name='control'),
     path('ajax/test/', views.ajaxTest, name='ajaxTest'),
-]
+    path('farm/', views.farmList, name='farmList'),
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) #for image path purposes

@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block head %}
+	<meta http-equiv="refresh" content="300">
+{% endblock %}
+
 {% block style %}
     .row{
         margin-top: 20px;
@@ -34,20 +38,20 @@
     <div class="container">
         <div class="row">
             <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">30 min</label>
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+				<label class="form-check-label" for="inlineRadio1">30 min</label>
             </div>
             <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">1 ura</label>
-            </div>
-                    <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option2">
-            <label class="form-check-label" for="inlineRadio3">2 uri</label>
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+				<label class="form-check-label" for="inlineRadio2">1 ura</label>
             </div>
             <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio4">3 ure</label>
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option2">
+				<label class="form-check-label" for="inlineRadio3">2 uri</label>
+            </div>
+            <div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option3" disabled>
+				<label class="form-check-label" for="inlineRadio4">3 ure</label>
             </div>
         </div>
         
@@ -79,6 +83,7 @@
 		startClock(onTime);
 	});
 
+
 	function setButtonOn()
 	{
 		buttonState = true;
@@ -105,15 +110,33 @@
 
 	$("#b1").click(function() {
 
+		var offTime = '0';
+		if($("#inlineRadio1").is(':checked'))
+		{
+			offTime = '1';
+		}
+		if($("#inlineRadio2").is(':checked'))
+		{
+			offTime = '2';
+		}
+		if($("#inlineRadio3").is(':checked'))
+		{
+			offTime = '3';
+		}
+		if($("#inlineRadio4").is(':checked'))
+		{
+			offTime = '4';
+		}
+
 		if(buttonState)
 		{
-			sendAjax('off');
+			sendAjax('off', offTime);
 			setButtonOff();	
 			endClock();				
 		}
 		else
 		{
-			sendAjax('on');	
+			sendAjax('on', offTime);	
 			setButtonOn();
 			startClock();			
 		}
@@ -143,8 +166,8 @@
 			}
 			
 			var timeStr = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
-					
-			jQuery('#clock').html(timeStr);
+			
+			jQuery('#clock').html(timeStr);		
 			  
 		}, 1000); 
 	}
@@ -184,7 +207,6 @@
 			clearWarning();
 			clearInterval(closeInterval);
 		}, 3000); 
-		
 	}
 
 	function clearWarning()
@@ -192,14 +214,15 @@
 		$( "#warning" ).remove();
 	}
 	
-	function sendAjax(action)
+	function sendAjax(action, offTime)
 	{ 
 		 $.ajax({
 			url: '/ajax/test/',
 			data: {
-				'action': action
+				'action': action,
+				'offTime': offTime
 			},
-			dataType: 'json',
+			//dataType: 'json',
 			success: function (data) {
 				if (data.status) {
 					//alert("Status: " + data.status + " text: " + data.text);

@@ -54,7 +54,32 @@ class Control(models.Model):
     last_on_time = models.DateTimeField(null=True, blank=True)
     last_off_time = models.DateTimeField(null=True, blank=True)
     set_off_time = models.DateTimeField(null=True, blank=True)
+    wan_ip = models.CharField(null=True, max_length=32)
 
     def __str__(self):
         retStr = str(self.control_id) + " - " + str(self.name)
+        return str(retStr)
+
+class Farm(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.TextField(blank=True)
+    address = models.CharField(max_length=64, blank=True)
+    contact = models.TextField(blank=True)
+    location_lat = models.FloatField(null=True, blank=True, default=None)
+    location_lng = models.FloatField(null=True, blank=True, default=None)
+    
+    def __str__(self):
+        retStr = str(self.name)
+        return str(retStr)
+
+class Offer(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.TextField(blank=True)
+    quantity = models.CharField(max_length=16, blank=True)
+    price = models.FloatField(null=True, blank=True, default=None)
+    image = models.ImageField(upload_to='test/', blank=True, null=True)
+    farm = models.ForeignKey(Farm, related_name='offers', on_delete=models.CASCADE)
+
+    def __str__(self):
+        retStr = str(self.name)
         return str(retStr)
