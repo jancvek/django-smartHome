@@ -34,6 +34,17 @@
     </div>
     <script>
 
+        if('{{ hasGeo }}' == 'False')
+        {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(callPositionPage);
+            } 
+
+            function callPositionPage(position) {
+                window.location.href = window.location.href + "?lat="+position.coords.latitude+"&lon="+position.coords.longitude;
+            }
+        }
+    
 	</script>
 
 {% endblock %}

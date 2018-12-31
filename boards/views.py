@@ -189,7 +189,10 @@ def farmList(request):
     mylat = request.GET.get('lat','')
     mylon = request.GET.get('lon','')
 
+    hasGeo = False
+
     if not mylat == '' and not mylon == '':
+        hasGeo = True
         mylat = radians(float(mylat))
         mylon = radians(float(mylon))
 
@@ -221,6 +224,7 @@ def farmList(request):
     
     context = {
         'dataList': dataList,
+        'hasGeo': hasGeo,
     }
 
     #return HttpResponse('place: '+ place)
